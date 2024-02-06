@@ -9,8 +9,9 @@ Project AREA is a comprehensive software suite designed to function similarly to
 3. **Mobile Client**: A mobile application for convenient access and interaction with the application server.
 
 ## Screenshots
-
-
+<img width="1312" alt="1" src="https://github.com/maxperso/AREA-IFTTT/assets/91894666/6b4918a3-6d04-43d7-a793-aa9849fdd99e">
+<img width="1462" alt="2" src="https://github.com/maxperso/AREA-IFTTT/assets/91894666/504d22fc-243a-4d5a-bb38-b63f7adc4739">
+<img width="1462" alt="3" src="https://github.com/maxperso/AREA-IFTTT/assets/91894666/a66710c1-04e4-43bb-bf15-69f5a33220dc">
 
 ## Getting Started
 
