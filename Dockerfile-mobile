@@ -1,0 +1,43 @@
+FROM ubuntu:20.04 AS build-env
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y curl git wget unzip libgconf-2-4 gdb libstdc++6 libglu1-mesa openjdk-17-jdk fonts-droid-fallback python3
+RUN apt-get clean
+
+ENV DEBIAN_FRONTEND=dialog
+ENV PUB_HOSTED_URL=https://pub.flutter-io.cn
+ENV FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+
+WORKDIR /app/frontend/area
+
+RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+ENV PATH="/usr/local/flutter/bin:${PATH}"
+
+RUN mkdir -p Android/sdk
+ENV ANDROID_SDK_ROOT /app/frontend/area/Android/sdk
+RUN mkdir -p .android && touch .android/repositories.cfg
+
+RUN wget -q -O sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+RUN unzip -q sdk-tools.zip && rm sdk-tools.zip
+RUN mv cmdline-tools Android/sdk/cmdline-tools
+RUN cd Android/sdk/cmdline-tools/bin \
+    && yes | ./sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses \
+    && ./sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "build-tools;30.0.3" "platforms;android-30" \
+    && ./sdkmanager --update --sdk_root=$ANDROID_SDK_ROOT
+ENV PATH "$PATH:/app/frontend/area/Android/sdk/platform-tools"
+
+RUN flutter config --enable-android
+
+WORKDIR /app/frontend/area
+
+COPY ./app/frontend .
+
+RUN flutter doctor \
+    && flutter clean \
+    && flutter pub upgrade \
+    && flutter pub get \
+    && flutter build apk --release
+
+RUN cp build/app/outputs/flutter-apk/app-release.apk /app/frontend/area/build/app/outputs/flutter-apk/client-mobile.apk
